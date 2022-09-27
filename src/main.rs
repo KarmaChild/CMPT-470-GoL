@@ -42,8 +42,6 @@ fn main() {
         return grid;
     }
 
-    println!("{:?}",initialize_grid(read_file_to_string_buffer("input.txt"),make_grid(10,10)));
-
     fn move_to_neighbor(cell_position: (i32,i32), move_direction: (i32,i32)) -> (usize,usize){
         let neighbor_position: (usize,usize) = ((cell_position.0+move_direction.0) as usize,(cell_position.1+move_direction.1) as usize);
         return neighbor_position;
@@ -67,25 +65,57 @@ fn main() {
     }
 
 
-    fn game_of_life(grid_a:Array2D<i32>,grid_b:Array2D<i32>) -> Array2D<i32>{
-        for generation in 1..100{
+    fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<i32>{
+        for generation in 1..3{
+            let mut grid_b_iter:(i32,i32) = (0,0);
+            let mut grid_a_iter:(i32,i32) = (0,0);
             if generation%2==0{
-                for iter in grid_b{
-                    if number_of_alive_neighbors(iter,grid_b)==3{
-                        grid_a.set(iter.0,iter.1,1);
+                for row in grid_b.as_rows(){
+                    for col in row{
+                        if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==3{
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1);
+                        }
+                        if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==2 && grid_b.get(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap())==Some(&1) {
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1);
+                        }
+                        else {
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),0);
+                        }
+                        grid_b_iter.1=grid_b_iter.1+1;
                     }
-                    if number_of_alive_neighbors(iter,grid_b)==2 && grid_b.get(iter.0,iter.1)==Some(&1) {
-                        grid_a.set(iter.0,iter.1,1);
+                    grid_b_iter.0=grid_b_iter.0+1;
+                    grid_b_iter.1=0;
+                }
+            }
+            else {
+                for row in grid_a.as_rows(){
+                    for col in row{
+                        if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==3{
+                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),1);
+                        }
+                        if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==2 && grid_a.get(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap())==Some(&1) {
+                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),1);
+                        }
+                        else {
+                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),0);
+                        }
+                        grid_a_iter.1=grid_a_iter.1+1;
                     }
-                    else {
-                        grid_a.set(iter.0,iter.1,0);
-                    }
+                    grid_a_iter.0=grid_a_iter.0+1;
+                    grid_a_iter.1=0;
                 }
             }
         }
-
-
+        return grid_a;
     }
 
+    let mut a = initialize_grid(read_file_to_string_buffer("input.txt"),make_grid(10,10));
+    let mut b = make_grid(10,10);
+
+    println!("{:?}",game_of_life(a,b));
+
+    fn write_to_file(grid: Array2D<i32>)->(){
+        let mut out = File::create("output.txt").expect("Unable to create file");
+    }
 
 }
