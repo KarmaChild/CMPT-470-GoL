@@ -54,8 +54,8 @@ fn main() {
 
         let directions: [(i32,i32);8] = [(-1,0),(1,0),(0,1),(0,-1),(-1,1),(-1,-1),(1,1),(1,-1)];
 
-        for i in directions{
-            let neighbor = grid.get(move_to_neighbor(cell_position,i).0,move_to_neighbor(cell_position,i).1);
+        for direction in directions{
+            let neighbor = grid.get(move_to_neighbor(cell_position,direction).0,move_to_neighbor(cell_position,direction).1);
             if neighbor == Some(&1){
                 alive=alive+1
             }
@@ -65,5 +65,27 @@ fn main() {
         }
         return alive;
     }
+
+
+    fn game_of_life(grid_a:Array2D<i32>,grid_b:Array2D<i32>) -> Array2D<i32>{
+        for generation in 1..100{
+            if generation%2==0{
+                for iter in grid_b{
+                    if number_of_alive_neighbors(iter,grid_b)==3{
+                        grid_a.set(iter.0,iter.1,1);
+                    }
+                    if number_of_alive_neighbors(iter,grid_b)==2 && grid_b.get(iter.0,iter.1)==Some(&1) {
+                        grid_a.set(iter.0,iter.1,1);
+                    }
+                    else {
+                        grid_a.set(iter.0,iter.1,0);
+                    }
+                }
+            }
+        }
+
+
+    }
+
 
 }
