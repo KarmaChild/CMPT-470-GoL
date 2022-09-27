@@ -13,7 +13,7 @@ fn main() {
     }
 
     fn read_file_to_string_buffer(filename: &str) -> String{
-        let file = File::open("input.txt").unwrap();
+        let file = File::open(filename).unwrap();
         let mut reader = BufReader::new(file);
 
         let mut initial_grid_state = String::new();
@@ -44,5 +44,26 @@ fn main() {
 
     println!("{:?}",initialize_grid(read_file_to_string_buffer("input.txt"),make_grid(10,10)));
 
+    fn move_to_neighbor(cell_position: (i32,i32), move_direction: (i32,i32)) -> (usize,usize){
+        let neighbor_position: (usize,usize) = ((cell_position.0+move_direction.0) as usize,(cell_position.1+move_direction.1) as usize);
+        return neighbor_position;
+    }
+
+    fn number_of_alive_neighbors(cell_position: (i32,i32), grid:Array2D<i32>) -> i32{
+        let mut alive:i32 = 0;
+
+        let directions: [(i32,i32);8] = [(-1,0),(1,0),(0,1),(0,-1),(-1,1),(-1,-1),(1,1),(1,-1)];
+
+        for i in directions{
+            let neighbor = grid.get(move_to_neighbor(cell_position,i).0,move_to_neighbor(cell_position,i).1);
+            if neighbor == Some(&1){
+                alive=alive+1
+            }
+            if neighbor == None {
+                continue;
+            }
+        }
+        return alive;
+    }
 
 }
