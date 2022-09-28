@@ -66,10 +66,11 @@ fn main() {
 
 
     fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<i32>{
-        for generation in 1..3{
+        for generation in 0..1{
             let mut grid_b_iter:(i32,i32) = (0,0);
             let mut grid_a_iter:(i32,i32) = (0,0);
-            if generation%2==0{
+
+            if generation%2!=0{
                 for row in grid_b.as_rows(){
                     for col in row{
                         if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==3{
@@ -106,16 +107,34 @@ fn main() {
                 }
             }
         }
-        return grid_a;
+        return grid_b;
     }
 
-    let mut a = initialize_grid(read_file_to_string_buffer("input.txt"),make_grid(10,10));
-    let mut b = make_grid(10,10);
+    let mut a = initialize_grid(read_file_to_string_buffer("input.txt"),make_grid(100,100));
+    let mut b = make_grid(100,100);
 
-    println!("{:?}",game_of_life(a,b));
+    //println!("{:?}",game_of_life(a,b));
 
-    fn write_to_file(grid: Array2D<i32>)->(){
-        let mut out = File::create("output.txt").expect("Unable to create file");
+    write_to_file(game_of_life(a,b),"output.txt");
+
+    fn write_to_file(grid: Array2D<i32>,filename: &str)->(){
+        let mut output_file = File::create(filename).expect("Unable to create file");
+        let mut line: i32 = 0;
+        let mut output_string = String::new();
+        for i in grid.elements_row_major_iter(){
+
+            if line>0 && line%100==0 {
+                output_string.push('\n');
+            }
+
+            if i==&1{
+                output_string.push('*');
+            }
+            else if i == &0{
+                output_string.push(' ');
+            }
+            line = line+1;
+        }
+        output_file.write_all(output_string.as_bytes()).expect("Unable to write to file");
     }
-
 }
