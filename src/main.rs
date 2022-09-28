@@ -66,38 +66,28 @@ fn main() {
 
 
     fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<i32>{
-        for generation in 0..1{
+        for generation in 0..3{
             let mut grid_b_iter:(i32,i32) = (0,0);
             let mut grid_a_iter:(i32,i32) = (0,0);
 
-            if generation%2!=0{
-                for row in grid_b.as_rows(){
-                    for col in row{
-                        if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==3{
-                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1);
-                        }
-                        if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==2 && grid_b.get(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap())==Some(&1) {
-                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1);
-                        }
-                        else {
-                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),0);
-                        }
-                        grid_b_iter.1=grid_b_iter.1+1;
-                    }
-                    grid_b_iter.0=grid_b_iter.0+1;
-                    grid_b_iter.1=0;
-                }
-            }
-            else {
+            if generation%2==0{
                 for row in grid_a.as_rows(){
                     for col in row{
-                        if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==3{
+                        println!("grid A: {:?}",grid_a_iter);
+                        if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==3 {
+                            println!("grid A neighbors: {}",number_of_alive_neighbors(grid_a_iter,grid_a.clone()));
                             grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),1);
                         }
                         if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==2 && grid_a.get(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap())==Some(&1) {
+                            println!("grid A neighbors: {}",number_of_alive_neighbors(grid_a_iter,grid_a.clone()));
                             grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),1);
                         }
-                        else {
+                        if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==2 && grid_a.get(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap())==Some(&0) {
+                            println!("grid A neighbors: {}",number_of_alive_neighbors(grid_a_iter,grid_a.clone()));
+                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),0);
+                        }
+                        if number_of_alive_neighbors(grid_a_iter,grid_a.clone())>3 || number_of_alive_neighbors(grid_a_iter,grid_a.clone())<2 {
+                            println!("grid A neighbors: {}",number_of_alive_neighbors(grid_a_iter,grid_a.clone()));
                             grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),0);
                         }
                         grid_a_iter.1=grid_a_iter.1+1;
@@ -105,13 +95,41 @@ fn main() {
                     grid_a_iter.0=grid_a_iter.0+1;
                     grid_a_iter.1=0;
                 }
+                println!("grid b full:{:?}",grid_b);
+            }
+            else {
+                for row in grid_b.as_rows(){
+                    for col in row{
+                        println!("grid B: {:?}",grid_b_iter);
+                        if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==3{
+                            println!("grid B neighbors: {}",number_of_alive_neighbors(grid_b_iter,grid_b.clone()) );
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1);
+                        }
+                        if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==2 && grid_b.get(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap())==Some(&1) {
+                            println!("grid B neighbors: {}",number_of_alive_neighbors(grid_b_iter,grid_b.clone()) );
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1);
+                        }
+                        if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==2 && grid_b.get(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap())==Some(&0) {
+                            println!("grid B neighbors: {}",number_of_alive_neighbors(grid_b_iter,grid_b.clone()) );
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),0);
+                        }
+                        if number_of_alive_neighbors(grid_b_iter,grid_b.clone())>3 || number_of_alive_neighbors(grid_b_iter,grid_b.clone())<2 {
+                            println!("grid B neighbors: {}",number_of_alive_neighbors(grid_b_iter,grid_b.clone()) );
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),0);
+                        }
+                        grid_b_iter.1=grid_b_iter.1+1;
+                    }
+                    grid_b_iter.0=grid_b_iter.0+1;
+                    grid_b_iter.1=0;
+                }
+                println!("grid a full:{:?}",grid_a);
             }
         }
         return grid_b;
     }
 
-    let mut a = initialize_grid(read_file_to_string_buffer("input.txt"),make_grid(100,100));
-    let mut b = make_grid(100,100);
+    let mut a = initialize_grid(read_file_to_string_buffer("input.txt"),make_grid(3,3));
+    let mut b = make_grid(3,3);
 
     //println!("{:?}",game_of_life(a,b));
 
@@ -123,7 +141,7 @@ fn main() {
         let mut output_string = String::new();
         for i in grid.elements_row_major_iter(){
 
-            if line>0 && line%100==0 {
+            if line>0 && line%3==0 {
                 output_string.push('\n');
             }
 
