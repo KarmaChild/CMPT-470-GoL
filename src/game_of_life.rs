@@ -20,12 +20,9 @@ fn type_of<T>(_: T) -> &'static str {
 /// * `rows` - A usize value > 0  that holds the number of rows in the 2d-Array grid
 /// * `cols` - A usize value > 0 that holds the number of columns in the 2d-Array grid
 ///
-/// # Preconditions
-///
-/// * `rows`==`cols` to keep the square shape
 ///
 pub fn make_grid(rows:usize,cols:usize) -> Array2D<i32> {
-    assert_eq!(rows,cols);
+
     assert_eq!(type_of(rows),"usize");
     assert_eq!(type_of(cols),"usize");
 
