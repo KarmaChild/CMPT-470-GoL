@@ -1,4 +1,3 @@
-#[allow(unused_variables)]
 use array2d::Array2D;
 use std::fs::File;
 use std::io::prelude::*;
@@ -82,6 +81,23 @@ fn number_of_alive_neighbors(cell_position: (i32,i32), grid:Array2D<i32>) -> i32
     return alive;
 }
 
+fn set_grid_values(iterator:(i32,i32), grid_a:Array2D<i32>, mut grid_b:Array2D<i32>) -> Array2D<i32>{
+    if number_of_alive_neighbors(iterator,grid_a.clone())==3 {
+        grid_b.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),1).expect("Cannot set grid value");
+    }
+    if number_of_alive_neighbors(iterator,grid_a.clone())==2 && grid_a.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())==Some(&1) {
+        grid_b.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),1).expect("Cannot set grid value");
+    }
+    if number_of_alive_neighbors(iterator,grid_a.clone())==2 && grid_a.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())==Some(&0) {
+        grid_b.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),0).expect("Cannot set grid value");
+    }
+    if number_of_alive_neighbors(iterator,grid_a.clone())>3 || number_of_alive_neighbors(iterator,grid_a.clone())<2 {
+        grid_b.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),0).expect("Cannot set grid value");
+    }
+
+    return grid_b;
+}
+
 
 pub fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<i32>{
     for generation in 0..50{
@@ -91,19 +107,7 @@ pub fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<
         if generation%2==0{
             for _row in grid_a.as_rows(){
                 for _col in _row{
-
-                    if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==3 {
-                        grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),1).expect("Cannot set grid value");
-                    }
-                    if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==2 && grid_a.get(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap())==Some(&1) {
-                        grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),1).expect("Cannot set grid value");
-                    }
-                    if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==2 && grid_a.get(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap())==Some(&0) {
-                        grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),0).expect("Cannot set grid value");
-                    }
-                    if number_of_alive_neighbors(grid_a_iter,grid_a.clone())>3 || number_of_alive_neighbors(grid_a_iter,grid_a.clone())<2 {
-                        grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),0).expect("Cannot set grid value");
-                    }
+                    grid_b=set_grid_values(grid_a_iter,grid_a.clone(),grid_b.clone());
                     grid_a_iter.1=grid_a_iter.1+1;
                 }
                 grid_a_iter.0=grid_a_iter.0+1;
@@ -114,18 +118,7 @@ pub fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<
         else {
             for _row in grid_b.as_rows(){
                 for _col in _row{
-                    if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==3{
-                        grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1).expect("Cannot set grid value");
-                    }
-                    if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==2 && grid_b.get(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap())==Some(&1) {
-                        grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1).expect("Cannot set grid value");
-                    }
-                    if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==2 && grid_b.get(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap())==Some(&0) {
-                        grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),0).expect("Cannot set grid value");
-                    }
-                    if number_of_alive_neighbors(grid_b_iter,grid_b.clone())>3 || number_of_alive_neighbors(grid_b_iter,grid_b.clone())<2 {
-                        grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),0).expect("Cannot set grid value");
-                    }
+                    grid_a=set_grid_values(grid_b_iter,grid_b.clone(),grid_a.clone());
                     grid_b_iter.1=grid_b_iter.1+1;
                 }
                 grid_b_iter.0=grid_b_iter.0+1;
