@@ -1,6 +1,5 @@
 #[allow(unused_variables)]
 use array2d::Array2D;
-use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{BufRead, BufReader};
@@ -8,7 +7,7 @@ use std::io::{BufRead, BufReader};
 fn main() {
 
     fn make_grid(rows:usize,cols:usize) -> Array2D<i32> {
-        let mut grid = Array2D::filled_with(0,rows,cols);
+        let  grid = Array2D::filled_with(0,rows,cols);
         return grid;
     }
 
@@ -28,7 +27,7 @@ fn main() {
         let mut pos:  (usize, usize) =  (0, 0);
         for i in initial_grid_state.chars(){
             if i=='*' {
-                grid.set(pos.0,pos.1, 1);
+                grid.set(pos.0,pos.1, 1).expect("Cannot set grid value");
                 pos.1=pos.1+1;
             }
             else if i==' ' {
@@ -71,71 +70,58 @@ fn main() {
             let mut grid_a_iter:(i32,i32) = (0,0);
 
             if generation%2==0{
-                for row in grid_a.as_rows(){
-                    for col in row{
-                        //println!("grid A: {:?}",grid_a_iter);
+                for _row in grid_a.as_rows(){
+                    for _col in _row{
+
                         if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==3 {
-                            //println!("grid A neighbors: {}",number_of_alive_neighbors(grid_a_iter,grid_a.clone()));
-                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),1);
+                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),1).expect("Cannot set grid value");
                         }
                         if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==2 && grid_a.get(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap())==Some(&1) {
-                            //println!("grid A neighbors: {}",number_of_alive_neighbors(grid_a_iter,grid_a.clone()));
-                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),1);
+                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),1).expect("Cannot set grid value");
                         }
                         if number_of_alive_neighbors(grid_a_iter,grid_a.clone())==2 && grid_a.get(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap())==Some(&0) {
-                            //println!("grid A neighbors: {}",number_of_alive_neighbors(grid_a_iter,grid_a.clone()));
-                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),0);
+                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),0).expect("Cannot set grid value");
                         }
                         if number_of_alive_neighbors(grid_a_iter,grid_a.clone())>3 || number_of_alive_neighbors(grid_a_iter,grid_a.clone())<2 {
-                            //println!("grid A neighbors: {}",number_of_alive_neighbors(grid_a_iter,grid_a.clone()));
-                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),0);
+                            grid_b.set(grid_a_iter.0.try_into().unwrap(),grid_a_iter.1.try_into().unwrap(),0).expect("Cannot set grid value");
                         }
                         grid_a_iter.1=grid_a_iter.1+1;
                     }
                     grid_a_iter.0=grid_a_iter.0+1;
                     grid_a_iter.1=0;
                 }
-                //write_to_file(grid_b.clone(),"output.txt");
-                //println!("grid b full:{:?}",grid_b);
+
             }
             else {
-                for row in grid_b.as_rows(){
-                    for col in row{
-                        //println!("grid B: {:?}",grid_b_iter);
+                for _row in grid_b.as_rows(){
+                    for _col in _row{
                         if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==3{
-                            //println!("grid B neighbors: {}",number_of_alive_neighbors(grid_b_iter,grid_b.clone()) );
-                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1);
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1).expect("Cannot set grid value");
                         }
                         if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==2 && grid_b.get(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap())==Some(&1) {
-                            //println!("grid B neighbors: {}",number_of_alive_neighbors(grid_b_iter,grid_b.clone()) );
-                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1);
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),1).expect("Cannot set grid value");
                         }
                         if number_of_alive_neighbors(grid_b_iter,grid_b.clone())==2 && grid_b.get(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap())==Some(&0) {
-                            //println!("grid B neighbors: {}",number_of_alive_neighbors(grid_b_iter,grid_b.clone()) );
-                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),0);
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),0).expect("Cannot set grid value");
                         }
                         if number_of_alive_neighbors(grid_b_iter,grid_b.clone())>3 || number_of_alive_neighbors(grid_b_iter,grid_b.clone())<2 {
-                            //println!("grid B neighbors: {}",number_of_alive_neighbors(grid_b_iter,grid_b.clone()) );
-                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),0);
+                            grid_a.set(grid_b_iter.0.try_into().unwrap(),grid_b_iter.1.try_into().unwrap(),0).expect("Cannot set grid value");
                         }
                         grid_b_iter.1=grid_b_iter.1+1;
                     }
                     grid_b_iter.0=grid_b_iter.0+1;
                     grid_b_iter.1=0;
                 }
-                //write_to_file(grid_a.clone(),"output.txt");
-                //println!("grid a full:{:?}",grid_a);
             }
         }
         return grid_a;
     }
 
-    let mut a = initialize_grid(read_file_to_string_buffer("input.txt"),make_grid(3,3));
-    let mut b = make_grid(3,3);
+    let a = initialize_grid(read_file_to_string_buffer("input.txt"),make_grid(100,100));
+    let b = make_grid(100,100);
 
-    //println!("{:?}",game_of_life(a,b));
-    game_of_life(a,b);
-    //write_to_file(game_of_life(a,b),"output.txt");
+
+    write_to_file(game_of_life(a,b),"output.txt");
 
     fn write_to_file(grid: Array2D<i32>,filename: &str)->(){
         let mut output_file = File::create(filename).expect("Unable to create file");
@@ -143,7 +129,7 @@ fn main() {
         let mut output_string = String::new();
         for i in grid.elements_row_major_iter(){
 
-            if line>0 && line%3==0 {
+            if line>0 && line%100==0 {
                 output_string.push('\n');
             }
 
