@@ -25,7 +25,7 @@ pub fn write_to_file(grid: Array2D<i32>,filename: &str)->(){
     let mut output_string = String::new();
     for i in grid.elements_row_major_iter(){
 
-        if line>0 && line%100==0 {
+        if line>0 && line%grid.num_rows() as i32 ==0 {
             output_string.push('\n');
         }
 
@@ -80,26 +80,26 @@ fn number_of_alive_neighbors(cell_position: (i32,i32), grid:Array2D<i32>) -> i32
     return alive;
 }
 
-fn set_grid_values(iterator:(i32,i32), grid_a:Array2D<i32>, mut grid_b:Array2D<i32>) -> Array2D<i32>{
-    if number_of_alive_neighbors(iterator,grid_a.clone())==3 {
-        grid_b.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),1).expect("Cannot set grid value");
+fn set_grid_values(iterator:(i32,i32), starting_grid:Array2D<i32>, mut final_grid:Array2D<i32>) -> Array2D<i32>{
+    if number_of_alive_neighbors(iterator,starting_grid.clone())==3 {
+        final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),1).expect("Cannot set grid value");
     }
-    if number_of_alive_neighbors(iterator,grid_a.clone())==2 && grid_a.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())==Some(&1) {
-        grid_b.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),1).expect("Cannot set grid value");
+    if number_of_alive_neighbors(iterator,starting_grid.clone())==2 && starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())==Some(&1) {
+        final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),1).expect("Cannot set grid value");
     }
-    if number_of_alive_neighbors(iterator,grid_a.clone())==2 && grid_a.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())==Some(&0) {
-        grid_b.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),0).expect("Cannot set grid value");
+    if number_of_alive_neighbors(iterator,starting_grid.clone())==2 && starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())==Some(&0) {
+        final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),0).expect("Cannot set grid value");
     }
-    if number_of_alive_neighbors(iterator,grid_a.clone())>3 || number_of_alive_neighbors(iterator,grid_a.clone())<2 {
-        grid_b.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),0).expect("Cannot set grid value");
+    if number_of_alive_neighbors(iterator,starting_grid.clone())>3 || number_of_alive_neighbors(iterator,starting_grid.clone())<2 {
+        final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),0).expect("Cannot set grid value");
     }
 
-    return grid_b;
+    return final_grid;
 }
 
 
 pub fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<i32>{
-    for generation in 0..50{
+    for generation in 0..100{
         let mut grid_b_iter:(i32,i32) = (0,0);
         let mut grid_a_iter:(i32,i32) = (0,0);
 
