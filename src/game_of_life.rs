@@ -58,7 +58,7 @@ pub fn initialize_grid(initial_grid_state:String,mut grid:Array2D<i32>) -> Array
     return grid;
 }
 
-fn move_to_neighbor(cell_position: (i32,i32), move_direction: (i32,i32)) -> (usize,usize){
+fn neighbor_position(cell_position: (i32,i32), move_direction: (i32,i32)) -> (usize,usize){
     let neighbor_position: (usize,usize) = ((cell_position.0+move_direction.0) as usize,(cell_position.1+move_direction.1) as usize);
     return neighbor_position;
 }
@@ -69,7 +69,7 @@ fn number_of_alive_neighbors(cell_position: (i32,i32), grid:Array2D<i32>) -> i32
     let directions: [(i32,i32);8] = [(-1,0),(1,0),(0,1),(0,-1),(-1,1),(-1,-1),(1,1),(1,-1)];
 
     for direction in directions{
-        let neighbor = grid.get(move_to_neighbor(cell_position,direction).0,move_to_neighbor(cell_position,direction).1);
+        let neighbor = grid.get(neighbor_position(cell_position,direction).0,neighbor_position(cell_position,direction).1);
         if neighbor == Some(&1){
             alive=alive+1
         }
