@@ -2,13 +2,47 @@ use array2d::Array2D;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{BufRead, BufReader};
+use std::any::type_name;
 
+///Returns the type of a variable as a String
+///
+/// # Arguments
+///
+/// * `T` - A variable
+fn type_of<T>(_: T) -> &'static str {
+    type_name::<T>()
+}
+
+/// Returns a 2d-Array grid with the specified size of type `Array2D<i32>`
+///
+/// # Arguments
+///
+/// * `rows` - A usize value > 0  that holds the number of rows in the 2d-Array grid
+/// * `cols` - A usize value > 0 that holds the number of columns in the 2d-Array grid
+///
+/// # Preconditions
+///
+/// * `rows`==`cols` to keep the square shape
+///
 pub fn make_grid(rows:usize,cols:usize) -> Array2D<i32> {
+    assert_eq!(rows,cols);
+    assert_eq!(type_of(rows),"usize");
+    assert_eq!(type_of(cols),"usize");
+
     let  grid = Array2D::filled_with(0,rows,cols);
     return grid;
 }
 
+/// Reads the input file and returns the initial state of the grid as a 2d-Array grid of type `Array2D<i32>`
+///
+/// # Arguments
+///
+/// * `filename` - The name of the input file as a `&str` type
+///
 pub fn read_file_to_string_buffer(filename: &str) -> String{
+
+    assert_eq!(type_of(filename),"&str");
+
     let file = File::open(filename).unwrap();
     let mut reader = BufReader::new(file);
 
@@ -19,7 +53,22 @@ pub fn read_file_to_string_buffer(filename: &str) -> String{
     return initial_grid_state;
 }
 
+/// Reads a 2d-Array grid and writes the grid state to a file
+///
+/// # Arguments
+///
+/// * `grid` - A grid of type `Array2D<i32>` to be written to a file
+/// * `filename` - The name of the output file as type `&str`
+///
+/// # Postconditions
+///
+/// * this function does not return anything
+///
 pub fn write_to_file(grid: Array2D<i32>,filename: &str)->(){
+
+    assert_eq!(type_of(grid.clone()),"array2d::Array2D<i32>");
+    assert_eq!(type_of(filename),"&str");
+
     let mut output_file = File::create(filename).expect("Unable to create file");
     let mut line: i32 = 0;
     let mut output_string = String::new();
@@ -40,7 +89,18 @@ pub fn write_to_file(grid: Array2D<i32>,filename: &str)->(){
     output_file.write_all(output_string.as_bytes()).expect("Unable to write to file");
 }
 
+///Reads a String containing a (initial) state of the grid and returns the state in a wd-Array grid of type `Array2D<i32>`
+///
+/// # Arguments
+///
+/// * `initial_grid_state` - The (initial) grid state as type `String`
+///* `grid` - The grid to be populated with the (initial) state as type `Array2D<i32>`
+///
 pub fn initialize_grid(initial_grid_state:String,mut grid:Array2D<i32>) -> Array2D<i32>{
+
+    assert_eq!(type_of(initial_grid_state.clone()),"alloc::string::String");
+    assert_eq!(type_of(grid.clone()),"array2d::Array2D<i32>");
+
     let mut pos:  (usize, usize) =  (0, 0);
     for i in initial_grid_state.chars(){
         if i=='*' {
@@ -58,12 +118,34 @@ pub fn initialize_grid(initial_grid_state:String,mut grid:Array2D<i32>) -> Array
     return grid;
 }
 
+
+/// Calculates and returns the neighboring cell of at a specific direction of a cell as a tuple of type `(usize,usize)`
+///
+/// # Arguments
+///
+/// * `cell_position` - The position of the current cell as a tuple of type `(i32,i32)`
+/// * `move_direction` - The direction to which the neighbor has to be found as a tuple of type `(i32,i32)`
+///
 fn neighbor_position(cell_position: (i32,i32), move_direction: (i32,i32)) -> (usize,usize){
+
+    assert_eq!(type_of(cell_position),"(i32, i32)");
+    assert_eq!(type_of(move_direction),"(i32, i32)");
+
     let neighbor_position: (usize,usize) = ((cell_position.0+move_direction.0) as usize,(cell_position.1+move_direction.1) as usize);
     return neighbor_position;
 }
 
+/// Returns the number of alive neighbors of a cell as type `i32`
+///
+/// # Arguments
+///
+/// * `cell_position` - The position of the cell as a tuple of type `(i32,i32)` for which the number of alive cells has to be found
+/// * `grid` - The grid where the cell given at `cell_position` resides as type `Array2D<i32>`
 fn number_of_alive_neighbors(cell_position: (i32,i32), grid:Array2D<i32>) -> i32{
+
+    assert_eq!(type_of(cell_position),"(i32, i32)");
+    assert_eq!(type_of(grid.clone()),"array2d::Array2D<i32>");
+
     let mut alive:i32 = 0;
 
     let directions: [(i32,i32);8] = [(-1,0),(1,0),(0,1),(0,-1),(-1,1),(-1,-1),(1,1),(1,-1)];
@@ -79,6 +161,8 @@ fn number_of_alive_neighbors(cell_position: (i32,i32), grid:Array2D<i32>) -> i32
     }
     return alive;
 }
+
+
 
 fn set_grid_values(iterator:(i32,i32), starting_grid:Array2D<i32>, mut final_grid:Array2D<i32>) -> Array2D<i32>{
     if number_of_alive_neighbors(iterator,starting_grid.clone())==3 {
