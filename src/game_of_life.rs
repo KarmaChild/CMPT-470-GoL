@@ -163,8 +163,21 @@ fn number_of_alive_neighbors(cell_position: (i32,i32), grid:Array2D<i32>) -> i32
 }
 
 
-
+///Calculates if a cell will be dead or alive in the next generation by calculating the number of
+/// alive cells in its neighborhood and sets up a grid with the updated cell values and returns the
+/// new updated grid as type `Array2D<i32>`
+///
+/// # Arguments
+///
+/// * `iterator` - A tuple of type `(i32,i32)` used for iterating the grid
+/// * `starting_grid` - The grid of type `Array2D<i32>` to be updated
+/// * `final_grid` - The grid of type `Array2D<i32>` that will hold the newly updated cell values
 fn set_grid_values(iterator:(i32,i32), starting_grid:Array2D<i32>, mut final_grid:Array2D<i32>) -> Array2D<i32>{
+
+    assert_eq!(type_of(iterator),"(i32, i32)");
+    assert_eq!(type_of(starting_grid.clone()),"array2d::Array2D<i32>");
+    assert_eq!(type_of(final_grid.clone()),"array2d::Array2D<i32>");
+
     if number_of_alive_neighbors(iterator,starting_grid.clone())==3 {
         final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),1).expect("Cannot set grid value");
     }
@@ -180,6 +193,7 @@ fn set_grid_values(iterator:(i32,i32), starting_grid:Array2D<i32>, mut final_gri
 
     return final_grid;
 }
+
 
 
 pub fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<i32>{
