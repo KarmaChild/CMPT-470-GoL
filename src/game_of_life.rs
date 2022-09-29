@@ -15,7 +15,6 @@ pub fn read_file_to_string_buffer(filename: &str) -> String{
     let mut initial_grid_state = String::new();
     while let Ok(n) = reader.read_line(&mut initial_grid_state) {
         if n == 0 { break; } // eof
-        //buf.clear(); // otherwise the data will accumulate in your buffer
     }
     return initial_grid_state;
 }
