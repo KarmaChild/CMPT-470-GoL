@@ -195,8 +195,24 @@ fn set_grid_values(iterator:(i32,i32), starting_grid:Array2D<i32>, mut final_gri
 }
 
 
-
+///Returns the state of the grid after 100 generations
+///
+/// # Arguments
+///
+/// * `grid_a` - A 2d-Array of type `Array2D<i32>` containing the initial state of the grid
+/// * `grid_b` - A helper 2d-Array grid of type `Array2D<i32>` to store the state of every other generation
+///
+/// # preconditions
+///
+/// * size && geometry of `grid_a`== size && geometry of `grid_b`
+///
 pub fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<i32>{
+
+    assert_eq!(type_of(grid_a.clone()),"array2d::Array2D<i32>");
+    assert_eq!(type_of(grid_b.clone()),"array2d::Array2D<i32>");
+    assert_eq!(grid_a.num_rows(),grid_b.num_rows());
+    assert_eq!(grid_a.num_columns(),grid_b.num_columns());
+
     for generation in 0..100{
         let mut grid_b_iter:(i32,i32) = (0,0);
         let mut grid_a_iter:(i32,i32) = (0,0);
