@@ -1,5 +1,4 @@
 use array2d::Array2D;
-
 mod game_of_life;
 
 fn main() {
