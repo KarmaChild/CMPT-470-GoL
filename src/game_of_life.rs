@@ -87,19 +87,49 @@ fn number_of_alive_neighbors(cell_position: (i32,i32), grid:Array2D<i32>) -> i32
     return alive;
 }
 
+fn is_firing(current_cell_state:Option<&i32>) -> bool{
+    if current_cell_state == Some(&1) {
+        return true
+    }
+    return false
+}
+
+fn becomes_alive(number_of_firing_cells:i32) -> bool {
+    if number_of_firing_cells == 2 {
+        return true
+    }
+    return false
+}
+
+
+fn is_in_refractory(current_cell_state:Option<&i32>) -> bool {
+    if current_cell_state == Some(&2) {
+        return true
+    }
+    return false
+}
+
+fn is_quiet(current_cell_state:Option<&i32>)-> bool {
+    if current_cell_state == Some(&0) {
+        return true
+    }
+    return false
+}
+
+
 fn set_grid_values(iterator:(i32,i32), starting_grid:Array2D<i32>, mut final_grid:Array2D<i32>) -> Array2D<i32>{
-    if number_of_alive_neighbors(iterator,starting_grid.clone())==2 {
+    if becomes_alive(number_of_alive_neighbors(iterator,starting_grid.clone())) {
         final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),1).expect("Cannot set grid value");
     }
-    if starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())==Some(&0) && number_of_alive_neighbors(iterator,starting_grid.clone())!=2{
+    if is_quiet(starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())) && !becomes_alive(number_of_alive_neighbors(iterator,starting_grid.clone())){
         final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),0).expect("Cannot set grid value");
     }
     // value is 1, is alive
-    if starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())==Some(&1) {
+    if is_firing(starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())) {
         final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),2).expect("Cannot set grid value");
     }
-    // value is 2, is in cooldown
-    if starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())==Some(&2) {
+    // value is 2, is in refractory
+    if is_in_refractory(starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())) {
         final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),0).expect("Cannot set grid value");
     }
 
@@ -108,7 +138,8 @@ fn set_grid_values(iterator:(i32,i32), starting_grid:Array2D<i32>, mut final_gri
 
 
 pub fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<i32>{
-    for generation in 0..4{
+    let number_of_generations:i32 = 3;
+    for generation in 0..number_of_generations{
         let mut grid_b_iter:(i32,i32) = (0,0);
         let mut grid_a_iter:(i32,i32) = (0,0);
 
@@ -134,5 +165,9 @@ pub fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<
             }
         }
     }
-    return grid_a;
+
+    if number_of_generations % 2 == 0 {
+        return grid_a
+    }
+    return grid_b
 }
