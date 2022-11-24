@@ -124,11 +124,11 @@ fn set_grid_values(iterator:(i32,i32), starting_grid:Array2D<i32>, mut final_gri
     if is_quiet(starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())) && !becomes_alive(number_of_alive_neighbors(iterator,starting_grid.clone())){
         final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),0).expect("Cannot set grid value");
     }
-    // value is 1, is alive
+
     if is_firing(starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())) {
         final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),2).expect("Cannot set grid value");
     }
-    // value is 2, is in refractory
+
     if is_in_refractory(starting_grid.get(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap())) {
         final_grid.set(iterator.0.try_into().unwrap(),iterator.1.try_into().unwrap(),0).expect("Cannot set grid value");
     }
