@@ -99,7 +99,7 @@ fn set_grid_values(iterator:(i32,i32), starting_grid:Array2D<i32>, mut final_gri
 
 
 pub fn game_of_life(mut grid_a:Array2D<i32>,mut grid_b:Array2D<i32>) -> Array2D<i32>{
-    let number_of_gens:i32 = 10;
+    let number_of_gens:i32 = 20;
     for generation in 0..number_of_gens{
         let mut grid_b_iter:(i32,i32) = (0,0);
         let mut grid_a_iter:(i32,i32) = (0,0);
