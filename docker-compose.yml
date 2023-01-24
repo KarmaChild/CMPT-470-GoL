@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  gol:
+    image: rust:latest
+    volumes:
+      - ./:/code
+    container_name: gol
+    restart: always
+    ports:
+      - 8000:8080
+    command: ["bin/bash"]
+    stdin_open: true
+    tty: true
