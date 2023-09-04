@@ -4,13 +4,6 @@ use std::io::prelude::*;
 use std::io::{BufRead, BufReader};
 use std::thread;
 use std::time::Duration;
-use crossterm::{
-    cursor,
-    execute,
-    style::{Color, SetBackgroundColor, SetForegroundColor},
-    terminal::{self, ClearType},
-    ExecutableCommand,
-};
 
 pub fn make_grid(rows:usize,cols:usize) -> Array2D<i32> {
     let  grid = Array2D::filled_with(0,rows,cols);
@@ -105,18 +98,9 @@ fn set_grid_values(iterator:(i32,i32), starting_grid:Array2D<i32>, mut final_gri
 
     return final_grid;
 }
-fn clear_screen() {
-    execute!(
-        terminal::Clear(ClearType::All),
-        cursor::MoveTo(0, 0),
-        SetForegroundColor(Color::Reset),
-        SetBackgroundColor(Color::Reset)
-    )
-        .unwrap();
-}
 
 pub fn game_of_life(mut grid_a: Array2D<i32>, mut grid_b: Array2D<i32>) -> Array2D<i32> {
-    let number_of_gens: i32 = 20;
+    let number_of_gens: i32 = 5;
     for generation in 0..number_of_gens {
         let mut grid_b_iter: (i32, i32) = (0, 0);
         let mut grid_a_iter: (i32, i32) = (0, 0);
@@ -130,7 +114,6 @@ pub fn game_of_life(mut grid_a: Array2D<i32>, mut grid_b: Array2D<i32>) -> Array
                 grid_a_iter.0 = grid_a_iter.0 + 1;
                 grid_a_iter.1 = 0;
             }
-            clear_screen(); // Clear the screen before printing the new generation
             print_grid(&grid_a);
         } else {
             for _row in grid_b.as_rows() {
@@ -141,12 +124,13 @@ pub fn game_of_life(mut grid_a: Array2D<i32>, mut grid_b: Array2D<i32>) -> Array
                 grid_b_iter.0 = grid_b_iter.0 + 1;
                 grid_b_iter.1 = 0;
             }
-            clear_screen(); // Clear the screen before printing the new generation
             print_grid(&grid_b);
         }
 
         // Ensure the output is immediately visible by flushing the stdout
         std::io::stdout().flush().unwrap();
+
+        // Sleep for 1 second (adjust the duration as needed)
         thread::sleep(Duration::from_secs(1));
     }
 
@@ -163,4 +147,5 @@ fn print_grid(grid: &Array2D<i32>) {
         }
         println!(); // Print a newline after every row
     }
+    println!(); // Print an additional newline to separate generations
 }
