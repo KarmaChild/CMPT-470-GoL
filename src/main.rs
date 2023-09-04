@@ -4,8 +4,8 @@ mod game_of_life;
 
 fn main() {
 
-    let row: usize = 100;
-    let col: usize = 100;
+    let row: usize = 10;
+    let col: usize = 10;
 
     let grid_a: Array2D<i32> = game_of_life::initialize_grid(game_of_life::read_file_to_string_buffer("input.txt"),game_of_life::make_grid(row,col));
     let grid_b: Array2D<i32>  = game_of_life::make_grid(row,col);
